@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tower of Hanoi Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f6f9;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        .tower-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .tower {
+            width: 120px;
+            height: 250px;
+            border: 2px solid black;
+            margin: 0 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+
+        .disk {
+            height: 20px;
+            margin: 3px 0;
+            background-color: steelblue;
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 10px;
+        }
+
+        #moves {
+            margin-top: 20px;
+            text-align: left;
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Tower of Hanoi Visualization</h2>
+
+<div>
+    <input type="number" id="diskInput" placeholder="Enter number of disks" min="1">
+    <button onclick="startHanoi()">Start</button>
+</div>
+
+<div class="tower-container">
+    <div class="tower" id="A"><strong>A</strong></div>
+    <div class="tower" id="B"><strong>B</strong></div>
+    <div class="tower" id="C"><strong>C</strong></div>
+</div>
+
+<div id="moves"></div>
+
+<script>
+async function startHanoi() {
+
+    let n = parseInt(document.getElementById("diskInput").value);
+    if (!n || n <= 0) {
+        alert("Enter valid number of disks!");
+        return;
+    }
+
+    document.getElementById("moves").innerHTML = "";
+    document.getElementById("A").innerHTML = "<strong>A</strong>";
+    document.getElementById("B").innerHTML = "<strong>B</strong>";
+    document.getElementById("C").innerHTML = "<strong>C</strong>";
+
+    // Create disks on Source tower (A)
+    for (let i = n; i >= 1; i--) {
+        let disk = document.createElement("div");
+        disk.className = "disk";
+        disk.style.width = (20 + i * 15) + "px";
+        disk.innerText = i;
+        document.getElementById("A").appendChild(disk);
+    }
+
+    await towerofhanoi(n, "A", "B", "C");
+}
+
+
+async function towerofhanoi(n, Source, Auxiliary, Target) {
+
+    if (n == 1) {
+        await moveDisk(Source, Target, 1);
+        return;
+    }
+
+    await towerofhanoi(n - 1, Source, Target, Auxiliary);
+
+    await moveDisk(Source, Target, n);
+
+    await towerofhanoi(n - 1, Auxiliary, Source, Target);
+}
+
+
+async function moveDisk(from, to, diskNumber) {
+
+    let fromTower = document.getElementById(from);
+    let toTower = document.getElementById(to);
+
+    let disk = fromTower.lastElementChild;
+    toTower.appendChild(disk);
+
+    let moveText = document.getElementById("moves");
+    moveText.innerHTML += 
+        "Move disk " + diskNumber + 
+        " from " + from + 
+        " to " + to + "<br>";
+
+    await sleep(700);
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+</script>
+
+</body>
+</html>
