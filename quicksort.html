@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Sort Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f6f9;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 10px;
+        }
+
+        .array-container {
+            margin: 20px;
+        }
+
+        .box {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            margin: 5px;
+            border: 2px solid black;
+            font-weight: bold;
+            background: lightgray;
+            transition: 0.3s;
+        }
+
+        .pivot { background: yellow; }
+        .active { background: orange; }
+        .swapped { background: red; color: white; }
+        .sorted { background: lightgreen; }
+
+        #algo {
+            text-align: left;
+            width: 650px;
+            margin: 20px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        #result {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Quick Sort Visualization (First Element Pivot)</h2>
+
+<input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
+<button onclick="startSort()">Start Sorting</button>
+
+<div class="array-container" id="arrayContainer"></div>
+
+<h3 id="result"></h3>
+
+<h3>Algorithm:</h3>
+<div id="algo">
+<pre>
+partition(a, l, r)
+
+p = a[l]
+i = l
+j = r + 1
+
+while i < j
+    increment i until a[i] >= p
+    decrement j until a[j] <= p
+
+    if i < j
+        swap a[i], a[j]
+
+swap a[l], a[j]
+return j
+
+
+quick_sort(a, l, r)
+
+if l < r
+    s = partition(a, l, r)
+    quick_sort(a, l, s-1)
+    quick_sort(a, s+1, r)
+
+
+</pre>
+</div>
+
+<script>
+
+async function startSort() {
+
+    let input = document.getElementById("arrayInput").value;
+
+    if (input.trim() === "") {
+        alert("Enter numbers first!");
+        return;
+    }
+
+    let arr = input.split(",").map(Number);
+
+    let container = document.getElementById("arrayContainer");
+    let result = document.getElementById("result");
+
+    container.innerHTML = "";
+    result.innerHTML = "";
+
+    let boxes = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        let div = document.createElement("div");
+        div.className = "box";
+        div.innerText = arr[i];
+        container.appendChild(div);
+        boxes.push(div);
+    }
+
+    await quickSort(arr, 0, arr.length - 1, boxes);
+
+    boxes.forEach(box => box.classList.add("sorted"));
+    result.innerHTML = "Sorting Completed";
+}
+
+
+async function quickSort(arr, l, r, boxes) {
+
+    if (l < r) {
+        let s = await partition(arr, l, r, boxes);
+        await quickSort(arr, l, s - 1, boxes);
+        await quickSort(arr, s + 1, r, boxes);
+    }
+}
+
+
+async function partition(arr, l, r, boxes) {
+
+    let pivot = arr[l];
+    let i = l;
+    let j = r + 1;
+
+    boxes[l].classList.add("pivot");
+
+    await sleep(600);
+
+    while (true) {
+
+        do {
+            i++;
+        } while (i <= r && arr[i] < pivot);
+
+        do {
+            j--;
+        } while (arr[j] > pivot);
+
+        if (i >= j) break;
+
+        await swap(arr, boxes, i, j);
+    }
+
+    await swap(arr, boxes, l, j);
+
+    boxes[l].classList.remove("pivot");
+    boxes[j].classList.add("sorted");
+
+    return j;
+}
+
+
+async function swap(arr, boxes, i, j) {
+
+    boxes[i].classList.add("swapped");
+    boxes[j].classList.add("swapped");
+
+    await sleep(500);
+
+    let temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+
+    boxes[i].innerText = arr[i];
+    boxes[j].innerText = arr[j];
+
+    boxes[i].classList.remove("swapped");
+    boxes[j].classList.remove("swapped");
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+</script>
+
+</body>
+</html>
