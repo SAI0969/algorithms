@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Min & Max Recursion Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f6f9;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        .array-container {
+            margin: 20px;
+        }
+
+        .box {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            margin: 5px;
+            border: 2px solid black;
+            font-weight: bold;
+            background-color: lightgray;
+        }
+
+        .checking {
+            background-color: orange;
+        }
+
+        .max {
+            background-color: lightgreen;
+        }
+
+        .min {
+            background-color: lightblue;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 10px;
+        }
+
+        #result {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        #algo {
+            text-align: left;
+            width: 400px;
+            margin: auto;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Min & Max Using Recursion Visualization</h2>
+
+<div>
+    <input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
+    <button onclick="startProcess()">Find Min & Max</button>
+</div>
+
+<div class="array-container" id="arrayContainer"></div>
+
+<div id="result"></div>
+
+<h3>Algorithm:</h3>
+<div id="algo">
+<pre>
+Find_Max(arr, n)
+if n == 1 return arr[0]
+max = Find_Max(arr, n-1)
+return (arr[n-1] > max) ? arr[n-1] : max
+
+Find_Min(arr, n)
+if n == 1 return arr[0]
+min = Find_Min(arr, n-1)
+return (arr[n-1] < min) ? arr[n-1] : min
+</pre>
+</div>
+
+<script>
+async function startProcess() {
+
+    let input = document.getElementById("arrayInput").value;
+    if (input.trim() === "") {
+        alert("Enter numbers first!");
+        return;
+    }
+
+    let arr = input.split(",").map(Number);
+    let container = document.getElementById("arrayContainer");
+    let result = document.getElementById("result");
+
+    container.innerHTML = "";
+    result.innerHTML = "";
+
+    let boxes = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        let div = document.createElement("div");
+        div.className = "box";
+        div.innerText = arr[i];
+        container.appendChild(div);
+        boxes.push(div);
+    }
+
+    let max = await Find_Max(arr, arr.length, boxes);
+    let min = await Find_Min(arr, arr.length, boxes);
+
+    result.innerHTML = 
+        "Maximum: " + max + 
+        "<br>Minimum: " + min;
+
+    boxes.forEach(box => box.classList.remove("checking"));
+}
+
+
+async function Find_Max(arr, n, boxes) {
+
+    if (n == 1) {
+        boxes[0].classList.add("max");
+        return arr[0];
+    }
+
+    let max = await Find_Max(arr, n - 1, boxes);
+
+    boxes[n - 1].classList.add("checking");
+    await sleep(700);
+
+    if (arr[n - 1] > max) {
+        document.querySelectorAll(".max")
+                .forEach(b => b.classList.remove("max"));
+        boxes[n - 1].classList.add("max");
+        boxes[n - 1].classList.remove("checking");
+        return arr[n - 1];
+    } else {
+        boxes[n - 1].classList.remove("checking");
+        return max;
+    }
+}
+
+
+async function Find_Min(arr, n, boxes) {
+
+    if (n == 1) {
+        boxes[0].classList.add("min");
+        return arr[0];
+    }
+
+    let min = await Find_Min(arr, n - 1, boxes);
+
+    boxes[n - 1].classList.add("checking");
+    await sleep(700);
+
+    if (arr[n - 1] < min) {
+        document.querySelectorAll(".min")
+                .forEach(b => b.classList.remove("min"));
+        boxes[n - 1].classList.add("min");
+        boxes[n - 1].classList.remove("checking");
+        return arr[n - 1];
+    } else {
+        boxes[n - 1].classList.remove("checking");
+        return min;
+    }
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+</script>
+
+</body>
+</html>
