@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Merge Sort Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f6f9;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 10px;
+        }
+
+        .array-container {
+            margin: 20px;
+        }
+
+        .box {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            margin: 5px;
+            border: 2px solid black;
+            font-weight: bold;
+            background: lightgray;
+            transition: 0.3s;
+        }
+
+        .active { background: orange; }
+        .merged { background: lightgreen; }
+
+        #algo {
+            text-align: left;
+            width: 650px;
+            margin: 20px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        #result {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Merge Sort Visualization (Divide & Conquer)</h2>
+
+<input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
+<button onclick="startSort()">Start Sorting</button>
+
+<div class="array-container" id="arrayContainer"></div>
+
+<h3 id="result"></h3>
+
+<h3>Algorithm:</h3>
+<div id="algo">
+<pre>
+MERGE_SORT(arr, left, right)
+
+1. If left >= right
+       return
+
+2. mid = (left + right) / 2
+
+3. MERGE_SORT(arr, left, mid)
+
+4. MERGE_SORT(arr, mid + 1, right)
+
+5. MERGE(arr, left, mid, right)
+
+
+
+MERGE(arr, left, mid, right)
+
+1. Create temporary array temp[]
+
+2. i = left
+   j = mid + 1
+   k = 0
+
+3. While i <= mid AND j <= right
+       If arr[i] < arr[j]
+            temp[k] = arr[i]
+            i++
+       Else
+            temp[k] = arr[j]
+            j++
+       k++
+
+4. Copy remaining elements from left half
+
+5. Copy remaining elements from right half
+
+6. Copy temp[] back into arr
+
+</pre>
+</div>
+
+<script>
+
+async function startSort() {
+
+    let input = document.getElementById("arrayInput").value;
+
+    if (input.trim() === "") {
+        alert("Enter numbers first!");
+        return;
+    }
+
+    let arr = input.split(",").map(Number);
+
+    let container = document.getElementById("arrayContainer");
+    let result = document.getElementById("result");
+
+    container.innerHTML = "";
+    result.innerHTML = "";
+
+    let boxes = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        let div = document.createElement("div");
+        div.className = "box";
+        div.innerText = arr[i];
+        container.appendChild(div);
+        boxes.push(div);
+    }
+
+    await mergeSort(arr, 0, arr.length - 1, boxes);
+
+    boxes.forEach(box => box.classList.add("merged"));
+    result.innerHTML = "Sorting Completed";
+}
+
+
+async function mergeSort(arr, left, right, boxes) {
+
+    if (left >= right) return;
+
+    let mid = Math.floor((left + right) / 2);
+
+    await mergeSort(arr, left, mid, boxes);
+    await mergeSort(arr, mid + 1, right, boxes);
+
+    await merge(arr, left, mid, right, boxes);
+}
+
+
+async function merge(arr, left, mid, right, boxes) {
+
+    let temp = [];
+    let i = left;
+    let j = mid + 1;
+
+    while (i <= mid && j <= right) {
+
+        boxes[i].classList.add("active");
+        boxes[j].classList.add("active");
+
+        await sleep(500);
+
+        if (arr[i] < arr[j]) {
+            temp.push(arr[i]);
+            i++;
+        } else {
+            temp.push(arr[j]);
+            j++;
+        }
+
+        boxes.forEach(box => box.classList.remove("active"));
+    }
+
+    while (i <= mid) {
+        temp.push(arr[i]);
+        i++;
+    }
+
+    while (j <= right) {
+        temp.push(arr[j]);
+        j++;
+    }
+
+    for (let k = 0; k < temp.length; k++) {
+        arr[left + k] = temp[k];
+        boxes[left + k].innerText = temp[k];
+        await sleep(300);
+    }
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+</script>
+
+</body>
+</html>
