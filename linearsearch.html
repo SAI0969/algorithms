@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Linear Search Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f6f9;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        .array-container {
+            margin: 20px;
+        }
+
+        .box {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            margin: 5px;
+            border: 2px solid black;
+            font-weight: bold;
+            background-color: lightgray;
+        }
+
+        .checking {
+            background-color: orange;
+        }
+
+        .found {
+            background-color: lightgreen;
+        }
+
+        .notfound {
+            background-color: red;
+            color: white;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 10px;
+        }
+
+        #algo {
+            text-align: left;
+            width: 300px;
+            margin: auto;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Linear Search Visualization</h2>
+
+<div>
+    <input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
+    <input type="number" id="keyInput" placeholder="Enter key">
+    <button onclick="startSearch()">Start Search</button>
+</div>
+
+<div class="array-container" id="arrayContainer"></div>
+
+<h3 id="result"></h3>
+
+<h3>Algorithm:</h3>
+<div id="algo">
+<pre>
+found = 0
+for i ← 0 to n
+    if arr[i] == key
+        found = 1
+        break
+        "Element found"
+
+if (!found)
+    "Element not found"
+</pre>
+</div>
+
+<script>
+async function startSearch() {
+
+    let arr = document.getElementById("arrayInput").value.split(",").map(Number);
+    let key = Number(document.getElementById("keyInput").value);
+    let container = document.getElementById("arrayContainer");
+    let result = document.getElementById("result");
+
+    container.innerHTML = "";
+    result.innerHTML = "";
+
+    let boxes = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        let div = document.createElement("div");
+        div.className = "box";
+        div.innerText = arr[i];
+        container.appendChild(div);
+        boxes.push(div);
+    }
+
+    let found = 0;
+
+    for (let i = 0; i < arr.length; i++) {
+
+        boxes[i].classList.add("checking");
+
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        if (arr[i] == key) {
+            found = 1;
+            boxes[i].classList.remove("checking");
+            boxes[i].classList.add("found");
+            result.innerHTML = "Element Found at index " + i;
+            break;
+        }
+
+        boxes[i].classList.remove("checking");
+    }
+
+    if (!found) {
+        result.innerHTML = "Element Not Found";
+        boxes.forEach(box => box.classList.add("notfound"));
+    }
+}
+</script>
+
+</body>
+</html>
