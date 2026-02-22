@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recursive Binary Search Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f6f9;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        .array-container {
+            margin: 20px;
+        }
+
+        .box {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            margin: 5px;
+            border: 2px solid black;
+            font-weight: bold;
+            background-color: lightgray;
+            transition: 0.3s;
+        }
+
+        .active {
+            background-color: orange;
+        }
+
+        .mid {
+            background-color: yellow;
+        }
+
+        .found {
+            background-color: lightgreen;
+        }
+
+        .discard {
+            background-color: #ddd;
+            opacity: 0.5;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #result {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        #algo {
+            text-align: left;
+            width: 420px;
+            margin: auto;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Recursive Binary Search Visualization</h2>
+
+<div>
+    <input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
+    <input type="number" id="keyInput" placeholder="Enter key">
+    <button onclick="startSearch()">Start Search</button>
+</div>
+
+<div class="array-container" id="arrayContainer"></div>
+
+<h3 id="result"></h3>
+
+<h3>Algorithm:</h3>
+<div id="algo">
+<pre>
+int binarySearch(int arr[], int left, int right, int key) {
+
+    if (left > right)
+        return -1;
+
+    int mid = (left + right) / 2;
+
+    if (arr[mid] == key)
+        return mid;
+
+    else if (key < arr[mid])
+        return binarySearch(arr, left, mid - 1, key);
+
+    else
+        return binarySearch(arr, mid + 1, right, key);
+}
+</pre>
+</div>
+
+<script>
+
+async function startSearch() {
+
+    let input = document.getElementById("arrayInput").value;
+    let key = Number(document.getElementById("keyInput").value);
+
+    if (input.trim() === "" || isNaN(key)) {
+        alert("Please enter valid array and key!");
+        return;
+    }
+
+    let arr = input.split(",").map(Number);
+
+    // Automatically sort array
+    arr.sort((a, b) => a - b);
+
+    let container = document.getElementById("arrayContainer");
+    let result = document.getElementById("result");
+
+    container.innerHTML = "";
+    result.innerHTML = "";
+
+    let boxes = [];
+
+    // Create array boxes
+    for (let i = 0; i < arr.length; i++) {
+        let div = document.createElement("div");
+        div.className = "box";
+        div.innerText = arr[i];
+        container.appendChild(div);
+        boxes.push(div);
+    }
+
+    let index = await binarySearch(arr, 0, arr.length - 1, key, boxes);
+
+    if (index === -1)
+        result.innerHTML = "❌ Element Not Found";
+    else
+        result.innerHTML = "✅ Element Found at Index " + index;
+}
+
+
+async function binarySearch(arr, left, right, key, boxes) {
+
+    if (left > right)
+        return -1;
+
+    let mid = Math.floor((left + right) / 2);
+
+    // Reset highlight
+    boxes.forEach(box => {
+        box.classList.remove("active", "mid");
+    });
+
+    // Highlight current search range
+    for (let i = left; i <= right; i++) {
+        boxes[i].classList.add("active");
+    }
+
+    boxes[mid].classList.add("mid");
+
+    await sleep(1000);
+
+    if (arr[mid] === key) {
+        boxes[mid].classList.remove("mid");
+        boxes[mid].classList.add("found");
+        return mid;
+    }
+
+    if (key < arr[mid]) {
+
+        // Discard right half
+        for (let i = mid; i <= right; i++) {
+            boxes[i].classList.add("discard");
+        }
+
+        return await binarySearch(arr, left, mid - 1, key, boxes);
+    }
+    else {
+
+        // Discard left half
+        for (let i = left; i <= mid; i++) {
+            boxes[i].classList.add("discard");
+        }
+
+        return await binarySearch(arr, mid + 1, right, key, boxes);
+    }
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+</script>
+
+</body>
+</html>
