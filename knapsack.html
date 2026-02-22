@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fractional Knapsack Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f4f6f9;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 8px;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px 12px;
+        }
+
+        .selected {
+            background-color: lightgreen;
+        }
+
+        .fractional {
+            background-color: orange;
+        }
+
+        #result {
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        #algo {
+            text-align: left;
+            width: 700px;
+            margin: 20px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Fractional Knapsack (Greedy)</h2>
+
+<input type="number" id="itemCount" placeholder="Number of items">
+<input type="number" id="capacity" placeholder="Capacity">
+<button onclick="createInputs()">Create Items</button>
+
+<div id="inputs"></div>
+
+<button onclick="solveKnapsack()">Solve</button>
+
+<div id="tableContainer"></div>
+
+<h3 id="result"></h3>
+
+<h3>Algorithm:</h3>
+<div id="algo">
+<pre>
+1. Calculate ratio[i] = profit[i] / weight[i]
+
+2. Sort items in descending order of ratio
+
+3. For each item:
+      If weight[i] <= capacity
+            Take full item
+            capacity -= weight[i]
+            totalProfit += profit[i]
+      Else
+            Take fractional part
+            totalProfit += profit[i] * (capacity/weight[i])
+            break
+
+</pre>
+</div>
+
+<script>
+
+function createInputs() {
+
+    let n = parseInt(document.getElementById("itemCount").value);
+    let inputDiv = document.getElementById("inputs");
+
+    if (!n || n <= 0) {
+        alert("Enter valid number of items!");
+        return;
+    }
+
+    inputDiv.innerHTML = "";
+
+    for (let i = 0; i < n; i++) {
+        inputDiv.innerHTML += `
+            <div>
+                Item ${i+1} Profit:
+                <input type="number" id="profit${i}">
+                Weight:
+                <input type="number" id="weight${i}">
+            </div>
+        `;
+    }
+}
+
+
+async function solveKnapsack() {
+
+    let n = parseInt(document.getElementById("itemCount").value);
+    let capacity = parseFloat(document.getElementById("capacity").value);
+
+    if (!n || isNaN(capacity)) {
+        alert("Enter valid inputs!");
+        return;
+    }
+
+    let profit = [];
+    let weight = [];
+    let ratio = [];
+
+    for (let i = 0; i < n; i++) {
+        profit[i] = parseFloat(document.getElementById("profit"+i).value);
+        weight[i] = parseFloat(document.getElementById("weight"+i).value);
+        ratio[i] = profit[i] / weight[i];
+    }
+
+    // Sort by ratio descending
+    for (let i = 0; i < n - 1; i++) {
+        for (let j = i + 1; j < n; j++) {
+            if (ratio[i] < ratio[j]) {
+
+                [ratio[i], ratio[j]] = [ratio[j], ratio[i]];
+                [profit[i], profit[j]] = [profit[j], profit[i]];
+                [weight[i], weight[j]] = [weight[j], weight[i]];
+            }
+        }
+    }
+
+    let tableHTML = `
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Profit</th>
+                <th>Weight</th>
+                <th>Ratio</th>
+            </tr>
+    `;
+
+    for (let i = 0; i < n; i++) {
+        tableHTML += `
+            <tr id="row${i}">
+                <td>${i+1}</td>
+                <td>${profit[i]}</td>
+                <td>${weight[i]}</td>
+                <td>${ratio[i].toFixed(2)}</td>
+            </tr>
+        `;
+    }
+
+    tableHTML += "</table>";
+    document.getElementById("tableContainer").innerHTML = tableHTML;
+
+    let totalProfit = 0;
+
+    for (let i = 0; i < n; i++) {
+
+        let row = document.getElementById("row"+i);
+
+        await sleep(800);
+
+        if (weight[i] <= capacity) {
+
+            capacity -= weight[i];
+            totalProfit += profit[i];
+            row.classList.add("selected");
+
+        } else {
+
+            let fraction = capacity / weight[i];
+            totalProfit += profit[i] * fraction;
+            row.classList.add("fractional");
+            break;
+        }
+    }
+
+    document.getElementById("result").innerHTML =
+        "Total Maximum Profit = " + totalProfit.toFixed(2);
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+</script>
+
+</body>
+</html>
