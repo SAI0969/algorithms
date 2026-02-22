@@ -59,7 +59,7 @@
 
 <body>
 
-<h2>Insertion Sort Visualization (Ascending)</h2>
+<h2>Insertion Sort Visualization (Descending)</h2>
 
 <div>
     <input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
@@ -75,7 +75,7 @@ for i ← 1 to n-1
     key = arr[i]
     j = i -1
 
-    while(j >= 0 && arr[j] > key)
+    while(j >= 0 && arr[j] < key)
         arr[j + 1] = arr[j]
         j--
 
