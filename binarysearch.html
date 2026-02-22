@@ -141,9 +141,9 @@ async function startSearch() {
     let index = await binarySearch(arr, 0, arr.length - 1, key, boxes);
 
     if (index === -1)
-        result.innerHTML = "❌ Element Not Found";
+        result.innerHTML = "Element Not Found";
     else
-        result.innerHTML = "✅ Element Found at Index " + index;
+        result.innerHTML = "Element Found at Index " + index;
 }
 
 
