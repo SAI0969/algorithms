@@ -1,202 +1,202 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Recursive Binary Search Visualization</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f6f9;
-        }
+<title>Binary Search Tree Search</title>
 
-        h2 {
-            margin-top: 20px;
-        }
+<style>
 
-        .array-container {
-            margin: 20px;
-        }
+body{
+    font-family: Arial;
+    text-align:center;
+    background:#f4f6f9;
+}
 
-        .box {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            line-height: 50px;
-            margin: 5px;
-            border: 2px solid black;
-            font-weight: bold;
-            background-color: lightgray;
-            transition: 0.3s;
-        }
+input,button{
+    padding:8px;
+    margin:5px;
+}
 
-        .active {
-            background-color: orange;
-        }
+.tree ul{
+    padding-top:20px;
+    position:relative;
+}
 
-        .mid {
-            background-color: yellow;
-        }
+.tree li{
+    display:inline-block;
+    text-align:center;
+    list-style-type:none;
+    position:relative;
+    padding:20px 5px 0 5px;
+}
 
-        .found {
-            background-color: lightgreen;
-        }
+.tree li::before,
+.tree li::after{
+    content:'';
+    position:absolute;
+    top:0;
+    right:50%;
+    border-top:2px solid #555;
+    width:50%;
+    height:20px;
+}
 
-        .discard {
-            background-color: #ddd;
-            opacity: 0.5;
-        }
+.tree li::after{
+    right:auto;
+    left:50%;
+    border-left:2px solid #555;
+}
 
-        button {
-            padding: 8px 15px;
-            margin: 10px;
-            cursor: pointer;
-        }
+.tree li:only-child::after,
+.tree li:only-child::before{
+    display:none;
+}
 
-        #result {
-            font-size: 18px;
-            margin-top: 10px;
-        }
+.tree li:first-child::before,
+.tree li:last-child::after{
+    border:none;
+}
 
-        #algo {
-            text-align: left;
-            width: 420px;
-            margin: auto;
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
+.node{
+    border:2px solid black;
+    padding:10px;
+    border-radius:6px;
+    background:white;
+    min-width:40px;
+}
+
+.visit{
+    background:orange;
+}
+
+.found{
+    background:lightgreen;
+}
+
+</style>
 </head>
 
 <body>
 
-<h2>Recursive Binary Search Visualization</h2>
+<h2>Binary Search Tree Visualization</h2>
 
-<div>
-    <input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
-    <input type="number" id="keyInput" placeholder="Enter key">
-    <button onclick="startSearch()">Start Search</button>
-</div>
+<input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
+<button onclick="buildTree()">Build Tree</button>
 
-<div class="array-container" id="arrayContainer"></div>
+<br><br>
+
+<input type="number" id="keyInput" placeholder="Enter key to search">
+<button onclick="search()">Search</button>
 
 <h3 id="result"></h3>
 
-<h3>Algorithm:</h3>
-<div id="algo">
-<pre>
-int binarySearch(int arr[], int left, int right, int key) {
-
-    if (left > right)
-        return -1;
-
-    int mid = (left + right) / 2;
-
-    if (arr[mid] == key)
-        return mid;
-
-    else if (key < arr[mid])
-        return binarySearch(arr, left, mid - 1, key);
-
-    else
-        return binarySearch(arr, mid + 1, right, key);
-}
-</pre>
+<div class="tree">
+<ul id="treeRoot"></ul>
 </div>
 
 <script>
 
-async function startSearch() {
-
-    let input = document.getElementById("arrayInput").value;
-    let key = Number(document.getElementById("keyInput").value);
-
-    if (input.trim() === "" || isNaN(key)) {
-        alert("Please enter valid array and key!");
-        return;
-    }
-
-    let arr = input.split(",").map(Number);
-
-    // Automatically sort array
-    arr.sort((a, b) => a - b);
-
-    let container = document.getElementById("arrayContainer");
-    let result = document.getElementById("result");
-
-    container.innerHTML = "";
-    result.innerHTML = "";
-
-    let boxes = [];
-
-    // Create array boxes
-    for (let i = 0; i < arr.length; i++) {
-        let div = document.createElement("div");
-        div.className = "box";
-        div.innerText = arr[i];
-        container.appendChild(div);
-        boxes.push(div);
-    }
-
-    let index = await binarySearch(arr, 0, arr.length - 1, key, boxes);
-
-    if (index === -1)
-        result.innerHTML = "Element Not Found";
-    else
-        result.innerHTML = "Element Found at Index " + index;
+class Node{
+constructor(value){
+this.value=value
+this.left=null
+this.right=null
+this.element=null
+}
 }
 
+let root=null
 
-async function binarySearch(arr, left, right, key, boxes) {
+function insert(node,value){
 
-    if (left > right)
-        return -1;
+if(node==null)
+return new Node(value)
 
-    let mid = Math.floor((left + right) / 2);
+if(value<node.value)
+node.left=insert(node.left,value)
 
-    // Reset highlight
-    boxes.forEach(box => {
-        box.classList.remove("active", "mid");
-    });
+else
+node.right=insert(node.right,value)
 
-    // Highlight current search range
-    for (let i = left; i <= right; i++) {
-        boxes[i].classList.add("active");
-    }
-
-    boxes[mid].classList.add("mid");
-
-    await sleep(1000);
-
-    if (arr[mid] === key) {
-        boxes[mid].classList.remove("mid");
-        boxes[mid].classList.add("found");
-        return mid;
-    }
-
-    if (key < arr[mid]) {
-
-        // Discard right half
-        for (let i = mid; i <= right; i++) {
-            boxes[i].classList.add("discard");
-        }
-
-        return await binarySearch(arr, left, mid - 1, key, boxes);
-    }
-    else {
-
-        // Discard left half
-        for (let i = left; i <= mid; i++) {
-            boxes[i].classList.add("discard");
-        }
-
-        return await binarySearch(arr, mid + 1, right, key, boxes);
-    }
+return node
 }
 
+function buildTree(){
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+let arr=document.getElementById("arrayInput").value
+.split(",")
+.map(Number)
+
+root=null
+
+arr.forEach(v=>{
+root=insert(root,v)
+})
+
+let container=document.getElementById("treeRoot")
+container.innerHTML=""
+
+drawTree(root,container)
+
+}
+
+function drawTree(node,parent){
+
+if(node==null) return
+
+let li=document.createElement("li")
+
+let div=document.createElement("div")
+div.className="node"
+div.innerText=node.value
+
+node.element=div
+
+li.appendChild(div)
+parent.appendChild(li)
+
+let ul=document.createElement("ul")
+li.appendChild(ul)
+
+drawTree(node.left,ul)
+drawTree(node.right,ul)
+
+}
+
+async function search(){
+
+let key=Number(document.getElementById("keyInput").value)
+
+let current=root
+
+while(current!=null){
+
+current.element.classList.add("visit")
+
+await sleep(800)
+
+if(key==current.value){
+
+current.element.classList.remove("visit")
+current.element.classList.add("found")
+
+document.getElementById("result").innerText="Element Found"
+return
+}
+
+else if(key<current.value)
+current=current.left
+
+else
+current=current.right
+
+}
+
+document.getElementById("result").innerText="Element Not Found"
+
+}
+
+function sleep(ms){
+return new Promise(r=>setTimeout(r,ms))
 }
 
 </script>
