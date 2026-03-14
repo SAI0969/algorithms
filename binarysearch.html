@@ -1,75 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Binary Search Tree Search</title>
+<title>Binary Search Tree Visualization</title>
 
 <style>
 
 body{
-    font-family: Arial;
-    text-align:center;
-    background:#f4f6f9;
+font-family:Arial;
+text-align:center;
+background:#f4f6f9;
 }
 
 input,button{
-    padding:8px;
-    margin:5px;
+padding:8px;
+margin:5px;
 }
 
-.tree ul{
-    padding-top:20px;
-    position:relative;
-}
-
-.tree li{
-    display:inline-block;
-    text-align:center;
-    list-style-type:none;
-    position:relative;
-    padding:20px 5px 0 5px;
-}
-
-.tree li::before,
-.tree li::after{
-    content:'';
-    position:absolute;
-    top:0;
-    right:50%;
-    border-top:2px solid #555;
-    width:50%;
-    height:20px;
-}
-
-.tree li::after{
-    right:auto;
-    left:50%;
-    border-left:2px solid #555;
-}
-
-.tree li:only-child::after,
-.tree li:only-child::before{
-    display:none;
-}
-
-.tree li:first-child::before,
-.tree li:last-child::after{
-    border:none;
+#treeContainer{
+position:relative;
+width:100%;
+height:500px;
+margin-top:20px;
 }
 
 .node{
-    border:2px solid black;
-    padding:10px;
-    border-radius:6px;
-    background:white;
-    min-width:40px;
+position:absolute;
+width:40px;
+height:40px;
+border:2px solid black;
+border-radius:50%;
+background:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.line{
+position:absolute;
+height:2px;
+background:black;
+transform-origin:0 0;
 }
 
 .visit{
-    background:orange;
+background:orange;
 }
 
 .found{
-    background:lightgreen;
+background:lightgreen;
 }
 
 </style>
@@ -89,9 +68,7 @@ input,button{
 
 <h3 id="result"></h3>
 
-<div class="tree">
-<ul id="treeRoot"></ul>
-</div>
+<div id="treeContainer"></div>
 
 <script>
 
@@ -100,6 +77,8 @@ constructor(value){
 this.value=value
 this.left=null
 this.right=null
+this.x=0
+this.y=0
 this.element=null
 }
 }
@@ -113,7 +92,6 @@ return new Node(value)
 
 if(value<node.value)
 node.left=insert(node.left,value)
-
 else
 node.right=insert(node.right,value)
 
@@ -132,33 +110,61 @@ arr.forEach(v=>{
 root=insert(root,v)
 })
 
-let container=document.getElementById("treeRoot")
+let container=document.getElementById("treeContainer")
 container.innerHTML=""
 
-drawTree(root,container)
+drawTree(root,container,window.innerWidth/2,50,window.innerWidth/4)
 
 }
 
-function drawTree(node,parent){
+function drawTree(node,container,x,y,offset){
 
 if(node==null) return
 
-let li=document.createElement("li")
+node.x=x
+node.y=y
 
 let div=document.createElement("div")
 div.className="node"
 div.innerText=node.value
 
+div.style.left=(x-20)+"px"
+div.style.top=y+"px"
+
+container.appendChild(div)
+
 node.element=div
 
-li.appendChild(div)
-parent.appendChild(li)
+if(node.left){
 
-let ul=document.createElement("ul")
-li.appendChild(ul)
+drawTree(node.left,container,x-offset,y+80,offset/2)
+drawLine(container,x,y+20,x-offset,y+80)
 
-drawTree(node.left,ul)
-drawTree(node.right,ul)
+}
+
+if(node.right){
+
+drawTree(node.right,container,x+offset,y+80,offset/2)
+drawLine(container,x,y+20,x+offset,y+80)
+
+}
+
+}
+
+function drawLine(container,x1,y1,x2,y2){
+
+let length=Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1))
+let angle=Math.atan2(y2-y1,x2-x1)*180/Math.PI
+
+let line=document.createElement("div")
+line.className="line"
+
+line.style.width=length+"px"
+line.style.left=x1+"px"
+line.style.top=y1+"px"
+line.style.transform="rotate("+angle+"deg)"
+
+container.appendChild(line)
 
 }
 
@@ -185,7 +191,6 @@ return
 
 else if(key<current.value)
 current=current.left
-
 else
 current=current.right
 
