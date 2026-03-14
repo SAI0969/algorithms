@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Binary Search Tree Min Max</title>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+background:#f4f6f9;
+}
+
+input,button{
+padding:8px;
+margin:5px;
+}
+
+#treeContainer{
+position:relative;
+width:100%;
+height:500px;
+margin-top:20px;
+}
+
+.node{
+position:absolute;
+width:40px;
+height:40px;
+border:2px solid black;
+border-radius:50%;
+background:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.line{
+position:absolute;
+height:2px;
+background:black;
+transform-origin:0 0;
+}
+
+.visit{
+background:orange;
+}
+
+.found{
+background:lightgreen;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Binary Search Tree (Min & Max)</h2>
+
+<input type="text" id="arrayInput" placeholder="Enter numbers (comma separated)">
+<button onclick="buildTree()">Build Tree</button>
+
+<br><br>
+
+<button onclick="findMin()">Find Min</button>
+<button onclick="findMax()">Find Max</button>
+
+<h3 id="result"></h3>
+
+<div id="treeContainer"></div>
+
+<script>
+
+class Node{
+constructor(value){
+this.value=value
+this.left=null
+this.right=null
+this.x=0
+this.y=0
+this.element=null
+}
+}
+
+let root=null
+
+function insert(node,value){
+
+if(node==null)
+return new Node(value)
+
+if(value<node.value)
+node.left=insert(node.left,value)
+else
+node.right=insert(node.right,value)
+
+return node
+}
+
+function buildTree(){
+
+let arr=document.getElementById("arrayInput").value
+.split(",")
+.map(Number)
+
+root=null
+
+arr.forEach(v=>{
+root=insert(root,v)
+})
+
+let container=document.getElementById("treeContainer")
+container.innerHTML=""
+
+drawTree(root,container,window.innerWidth/2,50,window.innerWidth/4)
+
+}
+
+function drawTree(node,container,x,y,offset){
+
+if(node==null) return
+
+node.x=x
+node.y=y
+
+let div=document.createElement("div")
+div.className="node"
+div.innerText=node.value
+
+div.style.left=(x-20)+"px"
+div.style.top=y+"px"
+
+container.appendChild(div)
+
+node.element=div
+
+if(node.left){
+
+drawTree(node.left,container,x-offset,y+80,offset/2)
+drawLine(container,x,y+20,x-offset,y+80)
+
+}
+
+if(node.right){
+
+drawTree(node.right,container,x+offset,y+80,offset/2)
+drawLine(container,x,y+20,x+offset,y+80)
+
+}
+
+}
+
+function drawLine(container,x1,y1,x2,y2){
+
+let length=Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1))
+let angle=Math.atan2(y2-y1,x2-x1)*180/Math.PI
+
+let line=document.createElement("div")
+line.className="line"
+
+line.style.width=length+"px"
+line.style.left=x1+"px"
+line.style.top=y1+"px"
+line.style.transform="rotate("+angle+"deg)"
+
+container.appendChild(line)
+
+}
+
+function resetColors(){
+
+document.querySelectorAll(".node").forEach(n=>{
+n.classList.remove("visit","found")
+})
+
+}
+
+async function findMin(){
+
+resetColors()
+
+let current=root
+
+while(current!=null){
+
+current.element.classList.add("visit")
+
+await sleep(800)
+
+if(current.left==null){
+
+current.element.classList.remove("visit")
+current.element.classList.add("found")
+
+document.getElementById("result").innerText="Min Element = "+current.value
+return
+}
+
+current=current.left
+
+}
+
+}
+
+async function findMax(){
+
+resetColors()
+
+let current=root
+
+while(current!=null){
+
+current.element.classList.add("visit")
+
+await sleep(800)
+
+if(current.right==null){
+
+current.element.classList.remove("visit")
+current.element.classList.add("found")
+
+document.getElementById("result").innerText="Max Element = "+current.value
+return
+}
+
+current=current.right
+
+}
+
+}
+
+function sleep(ms){
+return new Promise(r=>setTimeout(r,ms))
+}
+
+</script>
+
+</body>
+</html>
