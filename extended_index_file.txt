@@ -1,0 +1,118 @@
+// I have to work on this even more 
+
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>DAA Algorithm Visualizer</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+background:black;
+margin:20px;
+color:white;
+}
+
+h1{
+text-align:center;
+margin-bottom:40px;
+}
+
+.container{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+
+.card{
+background:#ff4d4d;
+border-radius:10px;
+box-shadow:0 6px 12px rgba(0,0,0,0.4);
+overflow:hidden;
+cursor:pointer;
+transition:0.3s;
+text-align:center;
+}
+
+.card:hover{
+transform:scale(1.07);
+}
+
+.card img{
+width:100%;
+height:200px;
+object-fit:contain;
+background:white;
+}
+
+.card-title{
+padding:12px;
+font-weight:bold;
+font-size:16px;
+color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>DAA Algorithm Visualizer</h1>
+
+<div class="container">
+
+<div class="card" onclick="openPage('linearsearch.html')">
+<img src="https://cdn.hashnode.com/res/hashnode/image/upload/v1660377112655/MV0OgeGto.gif">
+<div class="card-title">Linear Search</div>
+</div>
+
+<div class="card" onclick="openPage('bubblesort.html')">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Sorting_bubblesort_anim.gif/250px-Sorting_bubblesort_anim.gif">
+<div class="card-title">Bubble Sort</div>
+</div>
+
+<div class="card" onclick="openPage('insertionsort_non.html')">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Sorting_insertion_sort_anim.gif/250px-Sorting_insertion_sort_anim.gif">
+<div class="card-title">Insertion Sort (Non-Recursive)</div>
+</div>
+
+<div class="card" onclick="openPage('maxandmin_non.html')">
+<img src="https://raw.githubusercontent.com/SAI0969/Data-structures-lab/main/Recording%202026-03-14%20174200.gif">
+<div class="card-title">Max and Min (Non-Recursive)</div>
+</div>
+
+<div class="card" onclick="openPage('duplicate.html')">
+<img src="https://raw.githubusercontent.com/SAI0969/Data-structures-lab/main/2.gif">
+<div class="card-title">Duplicate Exists or Not </div>
+</div>
+
+<div class="card" onclick="openPage('insertionsort_rec.html')">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Sorting_insertion_sort_anim.gif/250px-Sorting_insertion_sort_anim.gif">
+<div class="card-title">Insertion Sort(Recursive)</div>
+</div>
+
+<div class="card" onclick="openPage('maxandmin_rec.html')">
+<img src="https://raw.githubusercontent.com/SAI0969/Data-structures-lab/main/Recording%202026-03-14%20174200.gif">
+<div class="card-title">Max and Min (Recursive)</div>
+</div>
+
+<div class = "card" onclick="openPage('towerofhanoi.html')">
+<img src = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Tower_of_Hanoi_4.gif/640px-Tower_of_Hanoi_4.gif">
+<div class="card-title">Tower of Hanoi </div>
+</div>
+
+
+</div>
+
+<script>
+
+function openPage(page){
+window.location.href=page;
+}
+
+</script>
+
+</body>
+</html>
